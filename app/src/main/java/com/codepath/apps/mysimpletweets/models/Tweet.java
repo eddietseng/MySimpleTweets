@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,6 +20,24 @@ public class Tweet {
         Tweet[] tweetArr = gson.fromJson(response, Tweet[].class);
 
         return Arrays.asList(tweetArr);
+    }
+
+    public Tweet(JSONObject jsonObject) {
+        try {
+            this.created_at = jsonObject.getString("created_at");
+            this.id = Long.parseLong(jsonObject.getString("id"));
+            this.text = jsonObject.getString("text");
+            this.user = new Tweet.UserBean();
+
+            JSONObject userObj = jsonObject.getJSONObject("user");
+
+            this.user.setProfile_image_url(userObj.getString("profile_image_url"));
+            this.user.setName(userObj.getString("name"));
+            this.user.setScreen_name(userObj.getString("screen_name"));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private String created_at;

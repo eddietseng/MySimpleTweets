@@ -1,6 +1,0 @@
-CHANGED,/Users/eddietseng/AndroidStudioProjects/MySimpleTweets/app/build/intermediates/transforms/instantRun/debug/folders/4000/5/enhanced/com/android/tools/fd/runtime/AppPatchesLoaderImpl.class
-CHANGED,/Users/eddietseng/AndroidStudioProjects/MySimpleTweets/app/build/intermediates/transforms/instantRun/debug/folders/4000/5/enhanced/android/support/v7/appcompat/R$style$override.class
-CHANGED,/Users/eddietseng/AndroidStudioProjects/MySimpleTweets/app/build/intermediates/transforms/instantRun/debug/folders/4000/5/enhanced/com/codepath/oauth/R$style$override.class
-CHANGED,/Users/eddietseng/AndroidStudioProjects/MySimpleTweets/app/build/intermediates/transforms/instantRun/debug/folders/4000/5/enhanced/com/codepath/apps/mysimpletweets/R$styleable$override.class
-CHANGED,/Users/eddietseng/AndroidStudioProjects/MySimpleTweets/app/build/intermediates/transforms/instantRun/debug/folders/4000/5/enhanced/com/codepath/apps/mysimpletweets/R$style$override.class
-CHANGED,/Users/eddietseng/AndroidStudioProjects/MySimpleTweets/app/build/intermediates/transforms/instantRun/debug/folders/4000/5/enhanced/org/parceler/Parceler$$Parcels$override.class

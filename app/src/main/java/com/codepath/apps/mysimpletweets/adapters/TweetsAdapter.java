@@ -56,12 +56,27 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         tvh.tvScreenName.setText("@" + tweet.getUser().getScreen_name());
         tvh.tvRelativeTimestamp.setText(getRelativeTimeAgo(tweet.getCreated_at()));
 
-        Picasso.with(context).load(tweet.getUser().getProfile_image_url()).into(tvh.ivProfileImage);
+        //Better profile image
+        String betterUrl = tweet.getUser().getProfile_image_url().replace("normal","bigger");
+
+        Picasso.with(context).load(betterUrl).into(tvh.ivProfileImage);
     }
 
     @Override
     public int getItemCount() {
         return tweets.size();
+    }
+
+    // Clean all elements of the recycler
+    public void clear() {
+        tweets.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items
+    public void addAll(List<Tweet> list) {
+        tweets.addAll(list);
+        notifyDataSetChanged();
     }
 
     // getRelativeTimeAgo("Mon Apr 01 21:16:23 +0000 2014");

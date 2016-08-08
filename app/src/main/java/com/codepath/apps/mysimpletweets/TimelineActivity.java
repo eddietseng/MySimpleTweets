@@ -2,6 +2,7 @@ package com.codepath.apps.mysimpletweets;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,22 +10,28 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.codepath.apps.mysimpletweets.adapters.TweetsAdapter;
 import com.codepath.apps.mysimpletweets.helper.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.mysimpletweets.models.CurrentUser;
 import com.codepath.apps.mysimpletweets.models.Tweet;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.TextHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class TimelineActivity extends AppCompatActivity {
+public class TimelineActivity extends AppCompatActivity
+        implements NewTweetFragment.NewTweetDialogListener{
 
+    private SwipeRefreshLayout swipeContainer;
     private TwitterClient client;
     private ArrayList<Tweet> tweets;
     private TweetsAdapter aTweets;
@@ -35,6 +42,26 @@ public class TimelineActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+
+        // Lookup the swipe container view
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                populateTimeline();
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
         //Find listView
         rvTweets = (RecyclerView)findViewById(R.id.rvTweets);
         //Create the arrayList
@@ -125,10 +152,15 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
                 Log.d("DEBUG",responseString);
+                tweets.clear();
+
                 List<Tweet> rTweets = Tweet.parseJSON(responseString);
                 tweets.addAll(rTweets);
                 aTweets.notifyDataSetChanged();
                 Log.d("DEBUG",tweets.toString());
+
+                // Now we call setRefreshing(false) to signal refresh has finished
+                swipeContainer.setRefreshing(false);
             }
 
             @Override
@@ -157,11 +189,33 @@ public class TimelineActivity extends AppCompatActivity {
         });
     }
 
-    public void onSendButtonClicked(View v) {
-        Toast.makeText(this,"Send clicked",Toast.LENGTH_SHORT).show();
-    }
+    public void onFinishEditDialog(final String inputText) {
+        client.postNewTweet(inputText, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG",response.toString());
 
-    public void onClearButtonClicked(View v) {
-        Toast.makeText(this,"Clear clicked",Toast.LENGTH_SHORT).show();
+                Tweet newTweet = new Tweet(response);
+                Log.d("DEBUG",newTweet.toString());
+                tweets.add(0,newTweet);
+                aTweets.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG",errorResponse.toString());
+                try {
+                    JSONArray errors = errorResponse.getJSONArray("errors");
+
+                    if(errors.length() >= 1) {
+                        Log.d("DEBUG",errors.length() + "");
+                        String errorMsg = errors.getJSONObject(0).getString("message");
+                        Toast.makeText(getApplicationContext(),errorMsg,Toast.LENGTH_LONG).show();
+                    }
+                } catch(JSONException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 }
