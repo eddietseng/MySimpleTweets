@@ -62,7 +62,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         Picasso.with(context).load(betterUrl).into(tvh.ivProfileImage);
 
-        if(tweet.getEntities().getMedia() != null &&
+        if(tweet.getEntities() != null && tweet.getEntities().getMedia() != null &&
                 tweet.getEntities().getMedia().size() > 0) {
             String mediaUrl = tweet.getEntities().getMedia().get(0).getMedia_url();
             Picasso.with(context).load(mediaUrl).resize(600, 450)
