@@ -46,6 +46,7 @@ public class Tweet {
     private String text;
     private boolean truncated;
     private EntitiesBean entities;
+    private ExtendedEntitiesBean extended_entities;
     private String source;
     private Object in_reply_to_status_id;
     private Object in_reply_to_status_id_str;
@@ -113,6 +114,14 @@ public class Tweet {
 
     public void setEntities(EntitiesBean entities) {
         this.entities = entities;
+    }
+
+    public ExtendedEntitiesBean getExtended_entities() {
+        return extended_entities;
+    }
+
+    public void setExtended_entities(ExtendedEntitiesBean extended_entities) {
+        this.extended_entities = extended_entities;
     }
 
     public String getSource() {
@@ -267,12 +276,13 @@ public class Tweet {
         this.lang = lang;
     }
 
+
     public static class EntitiesBean {
         private List<?> hashtags;
         private List<?> symbols;
         private List<?> user_mentions;
-
-        private List<UrlsBean> urls;
+        private List<?> urls;
+        private List<MediaBean> media;
 
         public List<?> getHashtags() {
             return hashtags;
@@ -298,19 +308,66 @@ public class Tweet {
             this.user_mentions = user_mentions;
         }
 
-        public List<UrlsBean> getUrls() {
+        public List<?> getUrls() {
             return urls;
         }
 
-        public void setUrls(List<UrlsBean> urls) {
+        public void setUrls(List<?> urls) {
             this.urls = urls;
         }
 
-        public static class UrlsBean {
+        public List<MediaBean> getMedia() {
+            return media;
+        }
+
+        public void setMedia(List<MediaBean> media) {
+            this.media = media;
+        }
+
+        public static class MediaBean {
+            private long id;
+            private String id_str;
+            private String media_url;
+            private String media_url_https;
             private String url;
-            private String expanded_url;
             private String display_url;
+            private String expanded_url;
+            private String type;
+
+            private SizesBean sizes;
             private List<Integer> indices;
+
+            public long getId() {
+                return id;
+            }
+
+            public void setId(long id) {
+                this.id = id;
+            }
+
+            public String getId_str() {
+                return id_str;
+            }
+
+            public void setId_str(String id_str) {
+                this.id_str = id_str;
+            }
+
+            public String getMedia_url() {
+                return media_url;
+            }
+
+            public void setMedia_url(String media_url) {
+                this.media_url = media_url;
+            }
+
+            public String getMedia_url_https() {
+                return media_url_https;
+            }
+
+            public void setMedia_url_https(String media_url_https) {
+                this.media_url_https = media_url_https;
+            }
 
             public String getUrl() {
                 return url;
@@ -318,14 +375,6 @@ public class Tweet {
 
             public void setUrl(String url) {
                 this.url = url;
-            }
-
-            public String getExpanded_url() {
-                return expanded_url;
-            }
-
-            public void setExpanded_url(String expanded_url) {
-                this.expanded_url = expanded_url;
             }
 
             public String getDisplay_url() {
@@ -336,12 +385,469 @@ public class Tweet {
                 this.display_url = display_url;
             }
 
+            public String getExpanded_url() {
+                return expanded_url;
+            }
+
+            public void setExpanded_url(String expanded_url) {
+                this.expanded_url = expanded_url;
+            }
+
+            public String getType() {
+                return type;
+            }
+
+            public void setType(String type) {
+                this.type = type;
+            }
+
+            public SizesBean getSizes() {
+                return sizes;
+            }
+
+            public void setSizes(SizesBean sizes) {
+                this.sizes = sizes;
+            }
+
             public List<Integer> getIndices() {
                 return indices;
             }
 
             public void setIndices(List<Integer> indices) {
                 this.indices = indices;
+            }
+
+            public static class SizesBean {
+
+                private SmallBean small;
+
+                private MediumBean medium;
+
+                private ThumbBean thumb;
+
+                private LargeBean large;
+
+                public SmallBean getSmall() {
+                    return small;
+                }
+
+                public void setSmall(SmallBean small) {
+                    this.small = small;
+                }
+
+                public MediumBean getMedium() {
+                    return medium;
+                }
+
+                public void setMedium(MediumBean medium) {
+                    this.medium = medium;
+                }
+
+                public ThumbBean getThumb() {
+                    return thumb;
+                }
+
+                public void setThumb(ThumbBean thumb) {
+                    this.thumb = thumb;
+                }
+
+                public LargeBean getLarge() {
+                    return large;
+                }
+
+                public void setLarge(LargeBean large) {
+                    this.large = large;
+                }
+
+                public static class SmallBean {
+                    private int w;
+                    private int h;
+                    private String resize;
+
+                    public int getW() {
+                        return w;
+                    }
+
+                    public void setW(int w) {
+                        this.w = w;
+                    }
+
+                    public int getH() {
+                        return h;
+                    }
+
+                    public void setH(int h) {
+                        this.h = h;
+                    }
+
+                    public String getResize() {
+                        return resize;
+                    }
+
+                    public void setResize(String resize) {
+                        this.resize = resize;
+                    }
+                }
+
+                public static class MediumBean {
+                    private int w;
+                    private int h;
+                    private String resize;
+
+                    public int getW() {
+                        return w;
+                    }
+
+                    public void setW(int w) {
+                        this.w = w;
+                    }
+
+                    public int getH() {
+                        return h;
+                    }
+
+                    public void setH(int h) {
+                        this.h = h;
+                    }
+
+                    public String getResize() {
+                        return resize;
+                    }
+
+                    public void setResize(String resize) {
+                        this.resize = resize;
+                    }
+                }
+
+                public static class ThumbBean {
+                    private int w;
+                    private int h;
+                    private String resize;
+
+                    public int getW() {
+                        return w;
+                    }
+
+                    public void setW(int w) {
+                        this.w = w;
+                    }
+
+                    public int getH() {
+                        return h;
+                    }
+
+                    public void setH(int h) {
+                        this.h = h;
+                    }
+
+                    public String getResize() {
+                        return resize;
+                    }
+
+                    public void setResize(String resize) {
+                        this.resize = resize;
+                    }
+                }
+
+                public static class LargeBean {
+                    private int w;
+                    private int h;
+                    private String resize;
+
+                    public int getW() {
+                        return w;
+                    }
+
+                    public void setW(int w) {
+                        this.w = w;
+                    }
+
+                    public int getH() {
+                        return h;
+                    }
+
+                    public void setH(int h) {
+                        this.h = h;
+                    }
+
+                    public String getResize() {
+                        return resize;
+                    }
+
+                    public void setResize(String resize) {
+                        this.resize = resize;
+                    }
+                }
+            }
+        }
+    }
+
+    public static class ExtendedEntitiesBean {
+
+        private List<MediaBean> media;
+
+        public List<MediaBean> getMedia() {
+            return media;
+        }
+
+        public void setMedia(List<MediaBean> media) {
+            this.media = media;
+        }
+
+        public static class MediaBean {
+            private long id;
+            private String id_str;
+            private String media_url;
+            private String media_url_https;
+            private String url;
+            private String display_url;
+            private String expanded_url;
+            private String type;
+
+            private SizesBean sizes;
+            private List<Integer> indices;
+
+            public long getId() {
+                return id;
+            }
+
+            public void setId(long id) {
+                this.id = id;
+            }
+
+            public String getId_str() {
+                return id_str;
+            }
+
+            public void setId_str(String id_str) {
+                this.id_str = id_str;
+            }
+
+            public String getMedia_url() {
+                return media_url;
+            }
+
+            public void setMedia_url(String media_url) {
+                this.media_url = media_url;
+            }
+
+            public String getMedia_url_https() {
+                return media_url_https;
+            }
+
+            public void setMedia_url_https(String media_url_https) {
+                this.media_url_https = media_url_https;
+            }
+
+            public String getUrl() {
+                return url;
+            }
+
+            public void setUrl(String url) {
+                this.url = url;
+            }
+
+            public String getDisplay_url() {
+                return display_url;
+            }
+
+            public void setDisplay_url(String display_url) {
+                this.display_url = display_url;
+            }
+
+            public String getExpanded_url() {
+                return expanded_url;
+            }
+
+            public void setExpanded_url(String expanded_url) {
+                this.expanded_url = expanded_url;
+            }
+
+            public String getType() {
+                return type;
+            }
+
+            public void setType(String type) {
+                this.type = type;
+            }
+
+            public SizesBean getSizes() {
+                return sizes;
+            }
+
+            public void setSizes(SizesBean sizes) {
+                this.sizes = sizes;
+            }
+
+            public List<Integer> getIndices() {
+                return indices;
+            }
+
+            public void setIndices(List<Integer> indices) {
+                this.indices = indices;
+            }
+
+            public static class SizesBean {
+
+                private SmallBean small;
+
+                private MediumBean medium;
+
+                private ThumbBean thumb;
+
+                private LargeBean large;
+
+                public SmallBean getSmall() {
+                    return small;
+                }
+
+                public void setSmall(SmallBean small) {
+                    this.small = small;
+                }
+
+                public MediumBean getMedium() {
+                    return medium;
+                }
+
+                public void setMedium(MediumBean medium) {
+                    this.medium = medium;
+                }
+
+                public ThumbBean getThumb() {
+                    return thumb;
+                }
+
+                public void setThumb(ThumbBean thumb) {
+                    this.thumb = thumb;
+                }
+
+                public LargeBean getLarge() {
+                    return large;
+                }
+
+                public void setLarge(LargeBean large) {
+                    this.large = large;
+                }
+
+                public static class SmallBean {
+                    private int w;
+                    private int h;
+                    private String resize;
+
+                    public int getW() {
+                        return w;
+                    }
+
+                    public void setW(int w) {
+                        this.w = w;
+                    }
+
+                    public int getH() {
+                        return h;
+                    }
+
+                    public void setH(int h) {
+                        this.h = h;
+                    }
+
+                    public String getResize() {
+                        return resize;
+                    }
+
+                    public void setResize(String resize) {
+                        this.resize = resize;
+                    }
+                }
+
+                public static class MediumBean {
+                    private int w;
+                    private int h;
+                    private String resize;
+
+                    public int getW() {
+                        return w;
+                    }
+
+                    public void setW(int w) {
+                        this.w = w;
+                    }
+
+                    public int getH() {
+                        return h;
+                    }
+
+                    public void setH(int h) {
+                        this.h = h;
+                    }
+
+                    public String getResize() {
+                        return resize;
+                    }
+
+                    public void setResize(String resize) {
+                        this.resize = resize;
+                    }
+                }
+
+                public static class ThumbBean {
+                    private int w;
+                    private int h;
+                    private String resize;
+
+                    public int getW() {
+                        return w;
+                    }
+
+                    public void setW(int w) {
+                        this.w = w;
+                    }
+
+                    public int getH() {
+                        return h;
+                    }
+
+                    public void setH(int h) {
+                        this.h = h;
+                    }
+
+                    public String getResize() {
+                        return resize;
+                    }
+
+                    public void setResize(String resize) {
+                        this.resize = resize;
+                    }
+                }
+
+                public static class LargeBean {
+                    private int w;
+                    private int h;
+                    private String resize;
+
+                    public int getW() {
+                        return w;
+                    }
+
+                    public void setW(int w) {
+                        this.w = w;
+                    }
+
+                    public int getH() {
+                        return h;
+                    }
+
+                    public void setH(int h) {
+                        this.h = h;
+                    }
+
+                    public String getResize() {
+                        return resize;
+                    }
+
+                    public void setResize(String resize) {
+                        this.resize = resize;
+                    }
+                }
             }
         }
     }
@@ -353,7 +859,7 @@ public class Tweet {
         private String screen_name;
         private String location;
         private String description;
-        private String url;
+        private Object url;
 
         private EntitiesBean entities;
         @SerializedName("protected")
@@ -363,8 +869,8 @@ public class Tweet {
         private int listed_count;
         private String created_at;
         private int favourites_count;
-        private int utc_offset;
-        private String time_zone;
+        private Object utc_offset;
+        private Object time_zone;
         private boolean geo_enabled;
         private boolean verified;
         private int statuses_count;
@@ -439,11 +945,11 @@ public class Tweet {
             this.description = description;
         }
 
-        public String getUrl() {
+        public Object getUrl() {
             return url;
         }
 
-        public void setUrl(String url) {
+        public void setUrl(Object url) {
             this.url = url;
         }
 
@@ -503,19 +1009,19 @@ public class Tweet {
             this.favourites_count = favourites_count;
         }
 
-        public int getUtc_offset() {
+        public Object getUtc_offset() {
             return utc_offset;
         }
 
-        public void setUtc_offset(int utc_offset) {
+        public void setUtc_offset(Object utc_offset) {
             this.utc_offset = utc_offset;
         }
 
-        public String getTime_zone() {
+        public Object getTime_zone() {
             return time_zone;
         }
 
-        public void setTime_zone(String time_zone) {
+        public void setTime_zone(Object time_zone) {
             this.time_zone = time_zone;
         }
 
@@ -720,16 +1226,7 @@ public class Tweet {
         }
 
         public static class EntitiesBean {
-            private UrlBean url;
             private DescriptionBean description;
-
-            public UrlBean getUrl() {
-                return url;
-            }
-
-            public void setUrl(UrlBean url) {
-                this.url = url;
-            }
 
             public DescriptionBean getDescription() {
                 return description;
@@ -737,58 +1234,6 @@ public class Tweet {
 
             public void setDescription(DescriptionBean description) {
                 this.description = description;
-            }
-
-            public static class UrlBean {
-
-                private List<UrlsBean> urls;
-
-                public List<UrlsBean> getUrls() {
-                    return urls;
-                }
-
-                public void setUrls(List<UrlsBean> urls) {
-                    this.urls = urls;
-                }
-
-                public static class UrlsBean {
-                    private String url;
-                    private String expanded_url;
-                    private String display_url;
-                    private List<Integer> indices;
-
-                    public String getUrl() {
-                        return url;
-                    }
-
-                    public void setUrl(String url) {
-                        this.url = url;
-                    }
-
-                    public String getExpanded_url() {
-                        return expanded_url;
-                    }
-
-                    public void setExpanded_url(String expanded_url) {
-                        this.expanded_url = expanded_url;
-                    }
-
-                    public String getDisplay_url() {
-                        return display_url;
-                    }
-
-                    public void setDisplay_url(String display_url) {
-                        this.display_url = display_url;
-                    }
-
-                    public List<Integer> getIndices() {
-                        return indices;
-                    }
-
-                    public void setIndices(List<Integer> indices) {
-                        this.indices = indices;
-                    }
-                }
             }
 
             public static class DescriptionBean {

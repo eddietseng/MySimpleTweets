@@ -51,6 +51,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         //clear out old image for a recycled view
         tvh.ivProfileImage.setImageResource(0);
+        tvh.ivMedia.setImageResource(0);
         tvh.tvUserName.setText(tweet.getUser().getName());
         tvh.tvBody.setText(tweet.getText());
         tvh.tvScreenName.setText("@" + tweet.getUser().getScreen_name());
@@ -60,6 +61,13 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         String betterUrl = tweet.getUser().getProfile_image_url().replace("normal","bigger");
 
         Picasso.with(context).load(betterUrl).into(tvh.ivProfileImage);
+
+        if(tweet.getEntities().getMedia() != null &&
+                tweet.getEntities().getMedia().size() > 0) {
+            String mediaUrl = tweet.getEntities().getMedia().get(0).getMedia_url();
+            Picasso.with(context).load(mediaUrl).resize(600, 450)
+                    .centerCrop().into(tvh.ivMedia);
+        }
     }
 
     @Override
@@ -126,6 +134,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         TextView tvBody;
         TextView tvScreenName;
         TextView tvRelativeTimestamp;
+        ImageView ivMedia;
 
         public TweetViewHolder(View itemView) {
             super(itemView);
@@ -134,6 +143,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             tvBody = (TextView)itemView.findViewById(R.id.tvBody);
             tvScreenName = (TextView)itemView.findViewById(R.id.tvScreenName);
             tvRelativeTimestamp = (TextView)itemView.findViewById(R.id.tvRelativeTimestamp);
+            ivMedia = (ImageView)itemView.findViewById(R.id.ivMedia);
 
             itemView.setOnClickListener( this );
         }
