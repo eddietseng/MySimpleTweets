@@ -25,6 +25,10 @@ public class MentionsTimelineFragment extends TweetsListFragment {
     // Send API request to get the mentions timeline json
     @Override
     protected void populateTimeline() {
+        if( !checkNetwork() )
+            return;
+
+        pd.show();
         client.getMentionsTimeline(0, new TextHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
@@ -44,10 +48,15 @@ public class MentionsTimelineFragment extends TweetsListFragment {
                 Log.d("DEBUG", responseString);
             }
         });
+        pd.dismiss();
     }
 
     @Override
     protected void customLoadMoreDataFromApi(int totalItemsCount) {
+        if( !checkNetwork() )
+            return;
+
+        pd.show();
         client.getMentionsTimeline(getTweets().get(totalItemsCount -1 ).getId(),
                 new TextHttpResponseHandler() {
                     @Override
@@ -63,5 +72,6 @@ public class MentionsTimelineFragment extends TweetsListFragment {
                         Log.d("DEBUG",responseString);
                     }
                 });
+        pd.dismiss();
     }
 }

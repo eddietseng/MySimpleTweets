@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * Created by eddietseng on 8/5/16.
  */
+@Parcel
 public class Tweet {
 
     public static List<Tweet> parseJSON(String response) {
@@ -21,6 +22,10 @@ public class Tweet {
         Tweet[] tweetArr = gson.fromJson(response, Tweet[].class);
 
         return Arrays.asList(tweetArr);
+    }
+
+    public Tweet() {
+
     }
 
     public Tweet(JSONObject jsonObject) {
@@ -49,17 +54,13 @@ public class Tweet {
     private EntitiesBean entities;
     private ExtendedEntitiesBean extended_entities;
     private String source;
-    private Object in_reply_to_status_id;
-    private Object in_reply_to_status_id_str;
-    private Object in_reply_to_user_id;
-    private Object in_reply_to_user_id_str;
-    private Object in_reply_to_screen_name;
+    private long in_reply_to_status_id;
+    private String in_reply_to_status_id_str;
+    private long in_reply_to_user_id;
+    private String in_reply_to_user_id_str;
+    private String in_reply_to_screen_name;
 
     private UserBean user;
-    private Object geo;
-    private Object coordinates;
-    private Object place;
-    private Object contributors;
     private boolean is_quote_status;
     private int retweet_count;
     private int favorite_count;
@@ -133,43 +134,43 @@ public class Tweet {
         this.source = source;
     }
 
-    public Object getIn_reply_to_status_id() {
+    public long getIn_reply_to_status_id() {
         return in_reply_to_status_id;
     }
 
-    public void setIn_reply_to_status_id(Object in_reply_to_status_id) {
+    public void setIn_reply_to_status_id(long in_reply_to_status_id) {
         this.in_reply_to_status_id = in_reply_to_status_id;
     }
 
-    public Object getIn_reply_to_status_id_str() {
+    public String getIn_reply_to_status_id_str() {
         return in_reply_to_status_id_str;
     }
 
-    public void setIn_reply_to_status_id_str(Object in_reply_to_status_id_str) {
+    public void setIn_reply_to_status_id_str(String in_reply_to_status_id_str) {
         this.in_reply_to_status_id_str = in_reply_to_status_id_str;
     }
 
-    public Object getIn_reply_to_user_id() {
+    public long getIn_reply_to_user_id() {
         return in_reply_to_user_id;
     }
 
-    public void setIn_reply_to_user_id(Object in_reply_to_user_id) {
+    public void setIn_reply_to_user_id(long in_reply_to_user_id) {
         this.in_reply_to_user_id = in_reply_to_user_id;
     }
 
-    public Object getIn_reply_to_user_id_str() {
+    public String getIn_reply_to_user_id_str() {
         return in_reply_to_user_id_str;
     }
 
-    public void setIn_reply_to_user_id_str(Object in_reply_to_user_id_str) {
+    public void setIn_reply_to_user_id_str(String in_reply_to_user_id_str) {
         this.in_reply_to_user_id_str = in_reply_to_user_id_str;
     }
 
-    public Object getIn_reply_to_screen_name() {
+    public String getIn_reply_to_screen_name() {
         return in_reply_to_screen_name;
     }
 
-    public void setIn_reply_to_screen_name(Object in_reply_to_screen_name) {
+    public void setIn_reply_to_screen_name(String in_reply_to_screen_name) {
         this.in_reply_to_screen_name = in_reply_to_screen_name;
     }
 
@@ -179,38 +180,6 @@ public class Tweet {
 
     public void setUser(UserBean user) {
         this.user = user;
-    }
-
-    public Object getGeo() {
-        return geo;
-    }
-
-    public void setGeo(Object geo) {
-        this.geo = geo;
-    }
-
-    public Object getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Object coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    public Object getPlace() {
-        return place;
-    }
-
-    public void setPlace(Object place) {
-        this.place = place;
-    }
-
-    public Object getContributors() {
-        return contributors;
-    }
-
-    public void setContributors(Object contributors) {
-        this.contributors = contributors;
     }
 
     public boolean isIs_quote_status() {
@@ -278,44 +247,9 @@ public class Tweet {
     }
 
 
+    @Parcel
     public static class EntitiesBean {
-        private List<?> hashtags;
-        private List<?> symbols;
-        private List<?> user_mentions;
-        private List<?> urls;
         private List<MediaBean> media;
-
-        public List<?> getHashtags() {
-            return hashtags;
-        }
-
-        public void setHashtags(List<?> hashtags) {
-            this.hashtags = hashtags;
-        }
-
-        public List<?> getSymbols() {
-            return symbols;
-        }
-
-        public void setSymbols(List<?> symbols) {
-            this.symbols = symbols;
-        }
-
-        public List<?> getUser_mentions() {
-            return user_mentions;
-        }
-
-        public void setUser_mentions(List<?> user_mentions) {
-            this.user_mentions = user_mentions;
-        }
-
-        public List<?> getUrls() {
-            return urls;
-        }
-
-        public void setUrls(List<?> urls) {
-            this.urls = urls;
-        }
 
         public List<MediaBean> getMedia() {
             return media;
@@ -325,6 +259,7 @@ public class Tweet {
             this.media = media;
         }
 
+        @Parcel
         public static class MediaBean {
             private long id;
             private String id_str;
@@ -418,6 +353,7 @@ public class Tweet {
                 this.indices = indices;
             }
 
+            @Parcel
             public static class SizesBean {
 
                 private SmallBean small;
@@ -460,6 +396,7 @@ public class Tweet {
                     this.large = large;
                 }
 
+                @Parcel
                 public static class SmallBean {
                     private int w;
                     private int h;
@@ -490,6 +427,7 @@ public class Tweet {
                     }
                 }
 
+                @Parcel
                 public static class MediumBean {
                     private int w;
                     private int h;
@@ -520,6 +458,7 @@ public class Tweet {
                     }
                 }
 
+                @Parcel
                 public static class ThumbBean {
                     private int w;
                     private int h;
@@ -550,6 +489,7 @@ public class Tweet {
                     }
                 }
 
+                @Parcel
                 public static class LargeBean {
                     private int w;
                     private int h;
@@ -583,6 +523,7 @@ public class Tweet {
         }
     }
 
+    @Parcel
     public static class ExtendedEntitiesBean {
 
         private List<MediaBean> media;
@@ -595,6 +536,7 @@ public class Tweet {
             this.media = media;
         }
 
+        @Parcel
         public static class MediaBean {
             private long id;
             private String id_str;
@@ -688,6 +630,7 @@ public class Tweet {
                 this.indices = indices;
             }
 
+            @Parcel
             public static class SizesBean {
 
                 private SmallBean small;
@@ -730,6 +673,7 @@ public class Tweet {
                     this.large = large;
                 }
 
+                @Parcel
                 public static class SmallBean {
                     private int w;
                     private int h;
@@ -760,6 +704,7 @@ public class Tweet {
                     }
                 }
 
+                @Parcel
                 public static class MediumBean {
                     private int w;
                     private int h;
@@ -790,6 +735,7 @@ public class Tweet {
                     }
                 }
 
+                @Parcel
                 public static class ThumbBean {
                     private int w;
                     private int h;
@@ -820,6 +766,7 @@ public class Tweet {
                     }
                 }
 
+                @Parcel
                 public static class LargeBean {
                     private int w;
                     private int h;

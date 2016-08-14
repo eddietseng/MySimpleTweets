@@ -35,6 +35,10 @@ public class UserTimelineFragment extends TweetsListFragment {
     // Send API request to get the user timeline json
     @Override
     protected void populateTimeline() {
+        if( !checkNetwork() )
+            return;
+
+        pd.show();
         String screenName = getArguments().getString("screen_name");
         client.getUserTimeline(screenName, 0, new TextHttpResponseHandler() {
             @Override
@@ -55,10 +59,15 @@ public class UserTimelineFragment extends TweetsListFragment {
                 Log.d("DEBUG", responseString);
             }
         });
+        pd.dismiss();
     }
 
     @Override
     protected void customLoadMoreDataFromApi(int totalItemsCount) {
+        if( !checkNetwork() )
+            return;
+
+        pd.show();
         String screenName = getArguments().getString("screen_name");
         client.getUserTimeline(screenName, getTweets().get(totalItemsCount - 1).getId(),
                 new TextHttpResponseHandler() {
@@ -75,5 +84,6 @@ public class UserTimelineFragment extends TweetsListFragment {
                         Log.d("DEBUG", responseString);
                     }
                 });
+        pd.dismiss();
     }
 }

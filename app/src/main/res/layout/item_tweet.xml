@@ -61,4 +61,24 @@
         android:layout_below="@+id/tvBody"
         android:layout_alignLeft="@+id/tvBody"
         android:layout_alignStart="@+id/tvBody" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ibtnReTweet"
+        android:layout_below="@+id/ivMedia"
+        android:layout_alignLeft="@+id/ivMedia"
+        android:layout_alignStart="@+id/ivMedia"
+        android:src="@drawable/ic_reply_black_24dp"
+        android:background="?android:attr/selectableItemBackground" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ibtnFavorite"
+        android:src="@drawable/ic_favorite_border_black_24dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_below="@+id/ivMedia"
+        android:layout_alignLeft="@+id/tvScreenName"
+        android:layout_alignStart="@+id/tvScreenName" />
 </RelativeLayout>

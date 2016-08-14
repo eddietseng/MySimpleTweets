@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -59,6 +60,11 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         tvh.tvBody.setText(tweet.getText());
         tvh.tvScreenName.setText("@" + tweet.getUser().getScreen_name());
         tvh.tvRelativeTimestamp.setText(getRelativeTimeAgo(tweet.getCreated_at()));
+
+        if(tweet.isFavorited())
+            tvh.ibtnFavorite.setImageResource(R.drawable.ic_favorite_black_24dp);
+        else
+            tvh.ibtnFavorite.setImageResource(R.drawable.ic_favorite_border_black_24dp);
 
         //Better profile image
         String betterUrl = tweet.getUser().getProfile_image_url().replace("normal","bigger");
@@ -137,6 +143,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         TextView tvScreenName;
         TextView tvRelativeTimestamp;
         ImageView ivMedia;
+        ImageButton ibtnReTweet;
+        ImageButton ibtnFavorite;
 
         public TweetViewHolder(View itemView, final RecyclerViewClickListener listener) {
             super(itemView);
@@ -146,6 +154,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             tvScreenName = (TextView)itemView.findViewById(R.id.tvScreenName);
             tvRelativeTimestamp = (TextView)itemView.findViewById(R.id.tvRelativeTimestamp);
             ivMedia = (ImageView)itemView.findViewById(R.id.ivMedia);
+            ibtnReTweet = (ImageButton)itemView.findViewById(R.id.ibtnReTweet);
+            ibtnFavorite = (ImageButton)itemView.findViewById(R.id.ibtnFavorite);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -156,6 +166,22 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             });
 
             ivProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null)
+                        listener.onViewClicked(v, getAdapterPosition());
+                }
+            });
+
+            ibtnReTweet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null)
+                        listener.onViewClicked(v, getAdapterPosition());
+                }
+            });
+
+            ibtnFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(listener != null)

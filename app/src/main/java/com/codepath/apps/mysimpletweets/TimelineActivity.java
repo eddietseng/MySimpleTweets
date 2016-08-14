@@ -1,5 +1,6 @@
 package com.codepath.apps.mysimpletweets;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import com.astuetz.PagerSlidingTabStrip;
 import com.codepath.apps.mysimpletweets.fragments.HomeTimeLineFragment;
 import com.codepath.apps.mysimpletweets.fragments.MentionsTimelineFragment;
 import com.codepath.apps.mysimpletweets.models.Tweet;
+import com.codepath.apps.mysimpletweets.utility.NetworkUtil;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -36,6 +38,7 @@ public class TimelineActivity extends AppCompatActivity
     private TwitterClient client;
     private ViewPager viewPager;
     private TweetsPagerAdapter tweetsPagerAdapter;
+    ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +46,15 @@ public class TimelineActivity extends AppCompatActivity
         setContentView(R.layout.activity_timeline);
         client = TwitterApplication.getRestClient();
 
-        storeCurrentUserData();
+        pd = new ProgressDialog(this);
+        pd.setTitle("Loading...");
+        pd.setMessage("Please wait.");
+        pd.setCancelable(false);
+
+        if(NetworkUtil.isOnline())
+            storeCurrentUserData();
+        else
+            NetworkUtil.showNoNetworkMessage(this);
 
         // Find the toolbar view inside the activity layout
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -81,14 +92,23 @@ public class TimelineActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.miCompose) {
-            showNewTweetDialog(userData);
-            return true;
-        } else if (id == R.id.miProfile) {
-            launchProfileActivity(userData);
-            return true;
+        if(userData == null && NetworkUtil.isOnline()) {
+            //TODO fully load then process
+            storeCurrentUserData();
         }
+
+        if(userData != null) {
+            //noinspection SimplifiableIfStatement
+            if (id == R.id.miCompose) {
+                showNewTweetDialog(userData);
+                return true;
+            } else if (id == R.id.miProfile) {
+                launchProfileActivity(userData);
+                return true;
+            }
+        }
+        else
+            NetworkUtil.showNoNetworkMessage(this);
 
         return super.onOptionsItemSelected(item);
     }
@@ -98,6 +118,71 @@ public class TimelineActivity extends AppCompatActivity
         // pass in the article into intent
         i.putExtra("user", Parcels.wrap(userData));
         startActivity(i);
+    }
+
+    private void showNewTweetDialog(Tweet.UserBean userData) {
+        FragmentManager fm = getSupportFragmentManager();
+        NewTweetFragment editNameDialogFragment =
+                NewTweetFragment.newInstance("New Tweet", userData, null);
+        editNameDialogFragment.show(fm, "fragment_edit_name");
+    }
+
+    private void storeCurrentUserData() {
+        pd.show();
+        client.getUserData(new TextHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                Log.d("DEBUG",responseString);
+                Tweet.UserBean currentUser = Tweet.UserBean.parseJSON(responseString);
+                userData = currentUser;
+                Log.d("DEBUG",userData.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString,
+                                  Throwable throwable) {
+                Log.d("DEBUG",responseString);
+            }
+        });
+        pd.dismiss();
+    }
+
+    public Tweet.UserBean getUserData() {
+        return userData;
+    }
+
+    @Override
+    public void onFinishEditDialog(final String inputText, Long tweetId) {
+        final Fragment fragment = tweetsPagerAdapter.getRegisteredFragment(viewPager.getCurrentItem());
+
+        client.postNewTweet(inputText, tweetId, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d("DEBUG",response.toString());
+
+                Tweet newTweet = new Tweet(response);
+                Log.d("DEBUG",newTweet.toString());
+
+                if(fragment instanceof HomeTimeLineFragment)
+                    ((HomeTimeLineFragment)fragment).addTweet(0,newTweet);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d("DEBUG",errorResponse.toString());
+                try {
+                    JSONArray errors = errorResponse.getJSONArray("errors");
+
+                    if(errors.length() >= 1) {
+                        Log.d("DEBUG",errors.length() + "");
+                        String errorMsg = errors.getJSONObject(0).getString("message");
+                        Toast.makeText(getApplicationContext(),errorMsg,Toast.LENGTH_LONG).show();
+                    }
+                } catch(JSONException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
     // Return the order fragments in the view pager
@@ -149,62 +234,5 @@ public class TimelineActivity extends AppCompatActivity
         public Fragment getRegisteredFragment(int position) {
             return registeredFragments.get(position);
         }
-    }
-
-    private void showNewTweetDialog(Tweet.UserBean userData) {
-        FragmentManager fm = getSupportFragmentManager();
-        NewTweetFragment editNameDialogFragment = NewTweetFragment.newInstance("New Tweet", userData);
-        editNameDialogFragment.show(fm, "fragment_edit_name");
-    }
-
-    private void storeCurrentUserData() {
-        client.getUserData(new TextHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                Log.d("DEBUG",responseString);
-                Tweet.UserBean currentUser = Tweet.UserBean.parseJSON(responseString);
-                userData = currentUser;
-                Log.d("DEBUG",userData.toString());
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString,
-                                  Throwable throwable) {
-                Log.d("DEBUG",responseString);
-            }
-        });
-    }
-
-    public void onFinishEditDialog(final String inputText) {
-        final Fragment fragment = tweetsPagerAdapter.getRegisteredFragment(viewPager.getCurrentItem());
-
-        client.postNewTweet(inputText, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d("DEBUG",response.toString());
-
-                Tweet newTweet = new Tweet(response);
-                Log.d("DEBUG",newTweet.toString());
-
-                if(fragment instanceof HomeTimeLineFragment)
-                    ((HomeTimeLineFragment)fragment).addTweet(0,newTweet);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("DEBUG",errorResponse.toString());
-                try {
-                    JSONArray errors = errorResponse.getJSONArray("errors");
-
-                    if(errors.length() >= 1) {
-                        Log.d("DEBUG",errors.length() + "");
-                        String errorMsg = errors.getJSONObject(0).getString("message");
-                        Toast.makeText(getApplicationContext(),errorMsg,Toast.LENGTH_LONG).show();
-                    }
-                } catch(JSONException ex) {
-                    ex.printStackTrace();
-                }
-            }
-        });
     }
 }

@@ -32,10 +32,11 @@ public class NewTweetFragment extends DialogFragment implements View.OnClickList
     private Button btnSend;
     private ImageButton iBtnClear;
     private TextView tvCounter;
+    private Long tweetId;
 
     // Defines the listener interface
     public interface NewTweetDialogListener {
-        void onFinishEditDialog(String inputText);
+        void onFinishEditDialog(String inputText, Long id);
     }
 
     public NewTweetFragment() {
@@ -44,11 +45,14 @@ public class NewTweetFragment extends DialogFragment implements View.OnClickList
         // Use `newInstance` instead as shown below
     }
 
-    public static NewTweetFragment newInstance(String title,Tweet.UserBean userData) {
+    public static NewTweetFragment newInstance(String title,Tweet.UserBean userData, Tweet tweet) {
         NewTweetFragment frag = new NewTweetFragment();
         Bundle args = new Bundle();
         args.putString("title",title);
         args.putParcelable("user", Parcels.wrap(userData));
+        if(tweet != null) {
+            args.putParcelable("tweet", Parcels.wrap(tweet));
+        }
         frag.setArguments(args);
         return frag;
     }
@@ -106,6 +110,12 @@ public class NewTweetFragment extends DialogFragment implements View.OnClickList
         tvUserName.setText(user.getName());
         tvScreenName.setText("@" + user.getScreen_name());
 
+        Tweet tweet = Parcels.unwrap(getArguments().getParcelable("tweet"));
+        if(tweet != null) {
+            etNewTweet.setText("@" + tweet.getUser().getScreen_name()+" ");
+            tweetId = tweet.getId();
+        }
+
         //Better profile image
         String betterUrl = user.getProfile_image_url().replace("normal","bigger");
 
@@ -122,7 +132,7 @@ public class NewTweetFragment extends DialogFragment implements View.OnClickList
 //        Toast.makeText(getContext(),"Send clicked",Toast.LENGTH_SHORT).show();
         if( etNewTweet.getText().length() > 0 ) {
             NewTweetDialogListener listener = (NewTweetDialogListener)getActivity();
-            listener.onFinishEditDialog(etNewTweet.getText().toString());
+            listener.onFinishEditDialog(etNewTweet.getText().toString(),tweetId);
         }
 
         // Close the dialog and return back to the parent activity

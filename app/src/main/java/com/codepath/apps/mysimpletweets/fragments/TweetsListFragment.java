@@ -1,9 +1,11 @@
 package com.codepath.apps.mysimpletweets.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,19 +15,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.codepath.apps.mysimpletweets.NewTweetFragment;
 import com.codepath.apps.mysimpletweets.ProfileActivity;
 import com.codepath.apps.mysimpletweets.R;
+import com.codepath.apps.mysimpletweets.TimelineActivity;
 import com.codepath.apps.mysimpletweets.TwitterApplication;
 import com.codepath.apps.mysimpletweets.TwitterClient;
 import com.codepath.apps.mysimpletweets.adapters.TweetsAdapter;
 import com.codepath.apps.mysimpletweets.helper.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.mysimpletweets.helper.RecyclerViewClickListener;
 import com.codepath.apps.mysimpletweets.models.Tweet;
+import com.codepath.apps.mysimpletweets.utility.NetworkUtil;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by eddietseng on 8/12/16.
@@ -37,6 +48,7 @@ public class TweetsListFragment extends Fragment implements RecyclerViewClickLis
     protected SwipeRefreshLayout swipeContainer;
 
     protected TwitterClient client;
+    protected ProgressDialog pd;
 
     // Inflation Logic
     @Nullable
@@ -72,6 +84,11 @@ public class TweetsListFragment extends Fragment implements RecyclerViewClickLis
         super.onCreate(savedInstanceState);
         client = TwitterApplication.getRestClient();
 
+        pd = new ProgressDialog(getContext());
+        pd.setTitle("Loading...");
+        pd.setMessage("Please wait.");
+        pd.setCancelable(false);
+
         //Create the arrayList
         tweets = new ArrayList<>();
         //Construct adapter
@@ -85,7 +102,12 @@ public class TweetsListFragment extends Fragment implements RecyclerViewClickLis
                 // Your code to refresh the list here.
                 // Make sure you call swipeContainer.setRefreshing(false)
                 // once the network request has completed successfully.
-                populateTimeline();
+                if(NetworkUtil.isOnline())
+                    populateTimeline();
+                else {
+                    // Now we call setRefreshing(false) to signal refresh has finished
+                    swipeContainer.setRefreshing(false);
+                }
             }
         });
     }
@@ -104,6 +126,14 @@ public class TweetsListFragment extends Fragment implements RecyclerViewClickLis
     }
 
     protected void customLoadMoreDataFromApi(int totalItemsCount) {
+    }
+
+    protected boolean checkNetwork() {
+        if(!NetworkUtil.isOnline()) {
+            NetworkUtil.showNoNetworkMessage(getContext());
+            return false;
+        }
+        return true;
     }
 
     public void addAll(List<Tweet> tweets) {
@@ -128,6 +158,7 @@ public class TweetsListFragment extends Fragment implements RecyclerViewClickLis
 
     @Override
     public void onViewClicked(View v, int position) {
+
         if(v.getId() == R.id.ivProfileImage){
             Tweet.UserBean user = tweets.get(position).getUser();
             Intent i = new Intent(getActivity(), ProfileActivity.class);
@@ -136,10 +167,95 @@ public class TweetsListFragment extends Fragment implements RecyclerViewClickLis
             i.putExtra("screen_name", user.getScreen_name());
             startActivity(i);
         }
+        else if(v.getId() == R.id.ibtnReTweet) {
+            if(getActivity() instanceof TimelineActivity) {
+                Tweet.UserBean userData = ((TimelineActivity)getActivity()).getUserData();
+                Tweet tweet = tweets.get(position);
+                FragmentManager fm = getFragmentManager();
+                NewTweetFragment editNameDialogFragment =
+                        NewTweetFragment.newInstance("New Tweet", userData, tweet);
+                editNameDialogFragment.show(fm, "fragment_edit_name");
+            }
+        }
+        else if(v.getId() == R.id.ibtnFavorite) {
+            Tweet tweet = tweets.get(position);
+            boolean currentSt = tweet.isFavorited();
+            sendFavorite(!currentSt, tweet.getId(), position);
+        }
     }
 
     @Override
     public void onRowClicked(int position) {
         Toast.makeText(getActivity(), "Item clicked " + position, Toast.LENGTH_SHORT).show();
+    }
+
+    protected void sendFavorite(boolean isFavorited, long id,final int position) {
+        if( !checkNetwork() )
+            return;
+
+        pd.show();
+        if(isFavorited) {
+            client.postCreateFavorite(id, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    Log.d("DEBUG",response.toString());
+
+                    Tweet newTweet = new Tweet(response);
+                    Log.d("DEBUG",newTweet.toString());
+
+                    Tweet tweet = tweets.get(position);
+                    tweet.setFavorited(true);
+                    aTweets.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("DEBUG",errorResponse.toString());
+                    try {
+                        JSONArray errors = errorResponse.getJSONArray("errors");
+
+                        if(errors.length() >= 1) {
+                            Log.d("DEBUG",errors.length() + "");
+                            String errorMsg = errors.getJSONObject(0).getString("message");
+                            Toast.makeText(getContext(),errorMsg,Toast.LENGTH_LONG).show();
+                        }
+                    } catch(JSONException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+        }
+        else {
+            client.postDeleteFavorite(id, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    Log.d("DEBUG",response.toString());
+
+                    Tweet newTweet = new Tweet(response);
+                    Log.d("DEBUG",newTweet.toString());
+
+                    Tweet tweet = tweets.get(position);
+                    tweet.setFavorited(false);
+                    aTweets.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("DEBUG",errorResponse.toString());
+                    try {
+                        JSONArray errors = errorResponse.getJSONArray("errors");
+
+                        if(errors.length() >= 1) {
+                            Log.d("DEBUG",errors.length() + "");
+                            String errorMsg = errors.getJSONObject(0).getString("message");
+                            Toast.makeText(getContext(),errorMsg,Toast.LENGTH_LONG).show();
+                        }
+                    } catch(JSONException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            });
+        }
+        pd.dismiss();
     }
 }
