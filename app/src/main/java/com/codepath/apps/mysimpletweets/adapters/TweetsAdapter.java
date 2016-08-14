@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.codepath.apps.mysimpletweets.R;
+import com.codepath.apps.mysimpletweets.helper.RecyclerViewClickListener;
 import com.codepath.apps.mysimpletweets.models.Tweet;
 import com.squareup.picasso.Picasso;
 
@@ -26,16 +27,18 @@ import java.util.Locale;
 public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private List<Tweet> tweets;
+    private RecyclerViewClickListener listener;
 
-    public TweetsAdapter(Context context, List<Tweet> tweets) {
+    public TweetsAdapter(Context context, List<Tweet> tweets, RecyclerViewClickListener listener) {
         this.context = context;
         this.tweets = tweets;
+        this.listener = listener;
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_tweet, parent, false);
-        TweetViewHolder viewHolder = new TweetViewHolder(view);
+        TweetViewHolder viewHolder = new TweetViewHolder(view,listener);
 
         return viewHolder;
     }
@@ -126,8 +129,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return relativeDate;
     }
 
-    public class TweetViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
+    public class TweetViewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivProfileImage;
         TextView tvUserName;
@@ -136,7 +138,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         TextView tvRelativeTimestamp;
         ImageView ivMedia;
 
-        public TweetViewHolder(View itemView) {
+        public TweetViewHolder(View itemView, final RecyclerViewClickListener listener) {
             super(itemView);
             ivProfileImage = (ImageView)itemView.findViewById(R.id.ivProfileImage);
             tvUserName = (TextView)itemView.findViewById(R.id.tvUserName);
@@ -145,12 +147,21 @@ public class TweetsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             tvRelativeTimestamp = (TextView)itemView.findViewById(R.id.tvRelativeTimestamp);
             ivMedia = (ImageView)itemView.findViewById(R.id.ivMedia);
 
-            itemView.setOnClickListener( this );
-        }
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null)
+                        listener.onRowClicked(getAdapterPosition());
+                }
+            });
 
-        @Override
-        public void onClick(View v) {
-
+            ivProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(listener != null)
+                        listener.onViewClicked(v, getAdapterPosition());
+                }
+            });
         }
     }
 }

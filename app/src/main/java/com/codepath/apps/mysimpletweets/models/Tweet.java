@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcel;
 
 import java.util.Arrays;
 import java.util.List;
@@ -852,16 +853,22 @@ public class Tweet {
         }
     }
 
+    @Parcel
     public static class UserBean {
+        public static UserBean parseJSON(String response) {
+            Gson gson = new GsonBuilder().create();
+            UserBean user = gson.fromJson(response, UserBean.class);
+
+            return user;
+        }
+
         private int id;
         private String id_str;
         private String name;
         private String screen_name;
         private String location;
         private String description;
-        private Object url;
 
-        private EntitiesBean entities;
         @SerializedName("protected")
         private boolean protectedX;
         private int followers_count;
@@ -869,8 +876,6 @@ public class Tweet {
         private int listed_count;
         private String created_at;
         private int favourites_count;
-        private Object utc_offset;
-        private Object time_zone;
         private boolean geo_enabled;
         private boolean verified;
         private int statuses_count;
@@ -945,22 +950,6 @@ public class Tweet {
             this.description = description;
         }
 
-        public Object getUrl() {
-            return url;
-        }
-
-        public void setUrl(Object url) {
-            this.url = url;
-        }
-
-        public EntitiesBean getEntities() {
-            return entities;
-        }
-
-        public void setEntities(EntitiesBean entities) {
-            this.entities = entities;
-        }
-
         public boolean isProtectedX() {
             return protectedX;
         }
@@ -1007,22 +996,6 @@ public class Tweet {
 
         public void setFavourites_count(int favourites_count) {
             this.favourites_count = favourites_count;
-        }
-
-        public Object getUtc_offset() {
-            return utc_offset;
-        }
-
-        public void setUtc_offset(Object utc_offset) {
-            this.utc_offset = utc_offset;
-        }
-
-        public Object getTime_zone() {
-            return time_zone;
-        }
-
-        public void setTime_zone(Object time_zone) {
-            this.time_zone = time_zone;
         }
 
         public boolean isGeo_enabled() {
@@ -1223,30 +1196,6 @@ public class Tweet {
 
         public void setNotifications(boolean notifications) {
             this.notifications = notifications;
-        }
-
-        public static class EntitiesBean {
-            private DescriptionBean description;
-
-            public DescriptionBean getDescription() {
-                return description;
-            }
-
-            public void setDescription(DescriptionBean description) {
-                this.description = description;
-            }
-
-            public static class DescriptionBean {
-                private List<?> urls;
-
-                public List<?> getUrls() {
-                    return urls;
-                }
-
-                public void setUrls(List<?> urls) {
-                    this.urls = urls;
-                }
-            }
         }
     }
 }

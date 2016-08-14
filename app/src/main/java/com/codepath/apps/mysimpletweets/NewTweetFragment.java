@@ -16,7 +16,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.codepath.apps.mysimpletweets.models.CurrentUser;
+import com.codepath.apps.mysimpletweets.models.Tweet;
 import com.squareup.picasso.Picasso;
 
 import org.parceler.Parcels;
@@ -44,7 +44,7 @@ public class NewTweetFragment extends DialogFragment implements View.OnClickList
         // Use `newInstance` instead as shown below
     }
 
-    public static NewTweetFragment newInstance(String title,CurrentUser userData) {
+    public static NewTweetFragment newInstance(String title,Tweet.UserBean userData) {
         NewTweetFragment frag = new NewTweetFragment();
         Bundle args = new Bundle();
         args.putString("title",title);
@@ -100,7 +100,7 @@ public class NewTweetFragment extends DialogFragment implements View.OnClickList
         // Fetch arguments from bundle and set title
         String title = getArguments().getString("title", "Tweet");
         getDialog().setTitle(title);
-        CurrentUser user = (CurrentUser) Parcels.unwrap(getArguments().getParcelable("user"));
+        Tweet.UserBean user = (Tweet.UserBean) Parcels.unwrap(getArguments().getParcelable("user"));
         Log.d("DEBUG",user.toString());
         ivProfile.setImageResource(0);
         tvUserName.setText(user.getName());
