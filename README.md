@@ -3,6 +3,51 @@ Twitter android application
 
 This is an Android twittter application
 
+Latest updates(8/14/2016):
+
+Time spent: 23+ hours spent in total
+
+Completed user stories:
+* [x] Includes all required user stories from Week 3 Twitter Client
+* [x] User can switch between Timeline and Mention views using tabs. (4 points)
+  * [x] User can view their home timeline tweets.
+  * [x] User can view the recent mentions of their username.
+* [x] User can navigate to view their own profile (3 points)
+  * [x] User can see picture, tagline, # of followers, # of following, and tweets on their profile.
+* [x] User can click on the profile image in any tweet to see another user's profile. (4 points total)
+  * [x] User can see picture, tagline, # of followers, # of following, and tweets of clicked user. (1 point)
+  * [x] Profile view should include that user's timeline (1 point)
+* [x] User can infinitely paginate any of these timelines (home, mentions, user) by scrolling to the bottom (1 point)
+
+Optional advanced user stories:
+* [x] Robust error handling, check if internet is available, handle error cases, network failures (1 point)
+* [x] User can "reply" to any tweet on their home timeline (1 point)
+  * [x] The user that wrote the original tweet is automatically "@" replied in compose (1 point)
+* [x] User can click on a tweet to be taken to a "detail view" of that tweet (1 point)
+  * [x] User can take favorite (and unfavorite) or retweet actions on a tweet (1 point)
+* [x] Improve the user interface and theme the app to feel "twitter branded" (1 to 5 points)
+* [x] Stretch: Use Parcelable instead of Serializable using the popular Parceler library. (1 point)
+
+The following libraries are used to make this possible:
+ * [Twitter API](https://dev.twitter.com/rest/public)
+ * [scribe-java](https://github.com/fernandezpablo85/scribe-java)
+ * [Android Async HTTP](https://github.com/loopj/android-async-http)
+ * [codepath-oauth](https://github.com/thecodepath/android-oauth-handler)
+ * [Picasso](https://github.com/square/picasso)
+ * [ActiveAndroid](https://github.com/pardom/ActiveAndroid)
+ * [GSON](https://google.github.io/gson/apidocs/com/google/gson/Gson.html)
+ * [PagerSlidingTabStrip](https://github.com/astuetz/PagerSlidingTabStrip)
+
+Walkthrough of all old user stories:
+
+![Video Walkthrough](MySimpleTweets2Demo_API_21.gif)
+
+GIF created with [LiceCap](http://www.cockos.com/licecap/).
+
+
+
+8/7/2016:
+
 Time spent: 19 hours spent in total
 
 Completed user stories:
@@ -35,8 +80,9 @@ The following libraries are used to make this possible:
  * [Picasso](https://github.com/square/picasso)
  * [ActiveAndroid](https://github.com/pardom/ActiveAndroid)
  * [GSON](https://google.github.io/gson/apidocs/com/google/gson/Gson.html)
+ * [PagerSlidingTabStrip](https://github.com/astuetz/PagerSlidingTabStrip)
 
-Walkthrough of all user stories:
+Walkthrough of all old user stories:
 
 ![Video Walkthrough](MySimpleTweetsDemo_API_21.gif)
 
