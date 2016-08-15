@@ -809,7 +809,7 @@ public class Tweet {
             return user;
         }
 
-        private int id;
+        private long id;
         private String id_str;
         private String name;
         private String screen_name;
@@ -849,11 +849,11 @@ public class Tweet {
         private boolean follow_request_sent;
         private boolean notifications;
 
-        public int getId() {
+        public long getId() {
             return id;
         }
 
-        public void setId(int id) {
+        public void setId(long id) {
             this.id = id;
         }
 

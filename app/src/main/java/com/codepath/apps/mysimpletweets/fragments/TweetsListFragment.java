@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.codepath.apps.mysimpletweets.DetailTweetActivity;
 import com.codepath.apps.mysimpletweets.NewTweetFragment;
 import com.codepath.apps.mysimpletweets.ProfileActivity;
 import com.codepath.apps.mysimpletweets.R;
@@ -168,7 +169,7 @@ public class TweetsListFragment extends Fragment implements RecyclerViewClickLis
             startActivity(i);
         }
         else if(v.getId() == R.id.ibtnReTweet) {
-            if(getActivity() instanceof TimelineActivity) {
+            if(getActivity() instanceof TimelineActivity ) {
                 Tweet.UserBean userData = ((TimelineActivity)getActivity()).getUserData();
                 Tweet tweet = tweets.get(position);
                 FragmentManager fm = getFragmentManager();
@@ -176,6 +177,14 @@ public class TweetsListFragment extends Fragment implements RecyclerViewClickLis
                         NewTweetFragment.newInstance("New Tweet", userData, tweet);
                 editNameDialogFragment.show(fm, "fragment_edit_name");
             }
+            else if(getActivity() instanceof ProfileActivity ) {
+                Tweet.UserBean userData = ((ProfileActivity)getActivity()).getUserData();
+                Tweet tweet = tweets.get(position);
+                FragmentManager fm = getFragmentManager();
+                NewTweetFragment editNameDialogFragment =
+                        NewTweetFragment.newInstance("New Tweet", userData, tweet);
+                editNameDialogFragment.show(fm, "fragment_edit_name");
+            }//TODO
         }
         else if(v.getId() == R.id.ibtnFavorite) {
             Tweet tweet = tweets.get(position);
@@ -186,7 +195,10 @@ public class TweetsListFragment extends Fragment implements RecyclerViewClickLis
 
     @Override
     public void onRowClicked(int position) {
-        Toast.makeText(getActivity(), "Item clicked " + position, Toast.LENGTH_SHORT).show();
+        Tweet tweet = tweets.get(position);
+        Intent i = new Intent(getActivity(), DetailTweetActivity.class);
+        i.putExtra("tweet", Parcels.wrap(tweet));
+        startActivity(i);
     }
 
     protected void sendFavorite(boolean isFavorited, long id,final int position) {
